@@ -1,0 +1,20 @@
+[
+	{
+		"id": "25db5191-9fe0-4224-87d1-c0f986c3b364",
+		"name": "batata",
+		"description": "batata doce",
+		"state": "OFF"
+	},
+	{
+		"id": "18974aca-f583-46bb-bcc0-dbc629931fcf",
+		"name": "sorvete",
+		"description": "sorvete gelado",
+		"state": "ON"
+	},
+	{
+		"id": "2b1a520a-8ed5-4cdb-aabb-6c355d1ffd20",
+		"name": "creme",
+		"description": "creme de leite",
+		"state": "ON"
+	}
+]
