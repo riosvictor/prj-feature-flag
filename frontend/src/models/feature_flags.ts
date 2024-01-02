@@ -19,3 +19,9 @@ export enum FeatureFlagStateEnum {
   ON = 'ON',
   OFF = 'OFF',
 }
+
+export type ResponseError = {
+  message: string;
+  error: string;
+  statusCode: number;
+}

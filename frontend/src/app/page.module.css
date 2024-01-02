@@ -20,20 +20,6 @@
   overflow-y: scroll;
 }
 
-/* .center::before {
-  background: var(--secondary-glow);
-  border-radius: 50%;
-  width: 480px;
-  height: 360px;
-  margin-left: -400px;
-}
-
-.center::after {
-  background: var(--primary-glow);
-  width: 240px;
-  height: 180px;
-  z-index: -1;
-} */
 
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {

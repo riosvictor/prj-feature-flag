@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { ArrowBack as BackIcon, Close as CloseIcon } from "@mui/icons-material";
 import { createFlag } from "@/common/requests";
+import { ResponseTranslateErrorMessage } from "@/common/constants";
 import { FeatureFlagStateEnum } from "@/models/feature_flags";
 import styles from './page.module.css'
 
@@ -39,6 +40,10 @@ export default function NewFlag() {
         setDescription('');
         setState(FeatureFlagStateEnum.OFF);
         setSnackMessage('Feature Flag criada com sucesso!');
+        setSnackOpen(true);
+      })
+      .catch((error) => {
+        setSnackMessage(`Erro ao criar Feature Flag. ${ResponseTranslateErrorMessage[error.message]}!`);
         setSnackOpen(true);
       })
       .finally(() => {

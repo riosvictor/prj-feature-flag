@@ -1,5 +1,5 @@
 import { 
-  FeatureFlagStateEnum, FeatureFlags, FeatureFlagsResponse, NewFeatureFlag
+  FeatureFlagStateEnum, FeatureFlags, FeatureFlagsResponse, NewFeatureFlag, ResponseError
 } from "@/models/feature_flags"
 
 interface IGetFlagsParams {
@@ -44,24 +44,23 @@ export async function deleteFlag(id: string): Promise<void> {
   });
 }
 
-export async function createFlag(flag: NewFeatureFlag): Promise<boolean> {
+export async function createFlag(flag: NewFeatureFlag): Promise<void> {
   const url = `${process.env.NEXT_PUBLIC_URL_BACKEND
     }/feature_flags`;
-  
-    try {
-      const { status } = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(flag),
-      });
-  
-      return status === 201;
-    } catch (err) {
-      console.error('Error creating feature flag:', err);
-      return false;
-    }
+
+  const response = (await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(flag),
+  }).then((res) =>
+    res.json()
+  )) as ResponseError
+
+  if (response.statusCode !== 201) {
+    throw new Error(response.message);
+  }
 }
 
 export async function updateFlag(id: string, flag: NewFeatureFlag): Promise<boolean> {
