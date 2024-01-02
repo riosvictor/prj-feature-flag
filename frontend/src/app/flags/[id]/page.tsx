@@ -17,6 +17,7 @@ import { ArrowBack as BackIcon, Close as CloseIcon } from "@mui/icons-material";
 import styles from './page.module.css'
 import { FeatureFlagStateEnum } from '@/models/feature_flags';
 import { getFlag, updateFlag } from '@/common/requests';
+import { ResponseTranslateErrorMessage } from '@/common/constants';
 import { useRouter } from 'next/navigation';
 
 interface IProps {
@@ -49,10 +50,11 @@ export default function EditFlag({ params }: IProps ) {
     setSubmitting(true);
     updateFlag(id, {name, description, state })
       .then(() => {
-        setName('');
-        setDescription('');
-        setState(FeatureFlagStateEnum.OFF);
         setSnackMessage('Feature Flag alterada com sucesso!');
+        setSnackOpen(true);
+      })
+      .catch((error) => {
+        setSnackMessage(`Erro ao alterar Feature Flag. ${ResponseTranslateErrorMessage[error.message]}!`);
         setSnackOpen(true);
       })
       .finally(() => {

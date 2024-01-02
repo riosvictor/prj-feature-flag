@@ -63,23 +63,22 @@ export async function createFlag(flag: NewFeatureFlag): Promise<void> {
   }
 }
 
-export async function updateFlag(id: string, flag: NewFeatureFlag): Promise<boolean> {
+export async function updateFlag(id: string, flag: NewFeatureFlag): Promise<void> {
   const url = `${process.env.NEXT_PUBLIC_URL_BACKEND
     }/feature_flags/${id}`;
   
-    try {
-      const { status } = await fetch(url, {
+    const response = (await fetch(url, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(flag),
-      });
+      }).then((res) =>
+      res.json()
+    )) as ResponseError
   
-      return status === 200;
-    } catch (err) {
-      console.error('Error updating feature flag:', err);
-      return false;
+    if (response.statusCode !== 200) {
+      throw new Error(response.message);
     }
 }
 
