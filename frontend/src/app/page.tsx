@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { Typography, Button } from '@mui/material';
 import { AddCircle as AddIcon } from '@mui/icons-material';
@@ -8,16 +8,16 @@ import FlagCard from '@/components/FlagCard'
 import Loading from '@/components/Loading';
 import { changeStateFlag, deleteFlag, getFlags } from '@/common/requests';
 import { FeatureFlags } from '@/models/feature_flags';
-import useInfiniteScroll from '@/hooks/InfiniteScroll';
 import styles from './page.module.css'
+import useInfiniteScroll from '../hooks/InfiniteScroll';
 
 export default function Home() {
   const take = 2;
   const [ skip, setSkip ] = useState(0);
-  const [ hasMore, setHasMore ] = useState(true);
   const [ isLoading, setLoading ] = useState(false);
   const [ blockNewFlagBtn, setBlockNewFlagBtn ] = useState(false);
   const [flags, setFlags] = useState<FeatureFlags[]>([])
+  
   
   const handleDelete = (id: string) => {
     deleteFlag(id).then(
@@ -47,24 +47,22 @@ export default function Home() {
       setBlockNewFlagBtn(false);
     }
   }
-  const loadFlags = () => {
-    if (hasMore) {
-      setLoading(true);
+  const fetchData = useCallback(async () => {
+    if (isLoading) return;
 
-      getFlags({ skip, take })
-        .then((response) => {
-          setFlags([...flags, ...response]);
-          setSkip(skip + take);
-          setHasMore(response.length === take);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }
-  const setTarget = useInfiniteScroll({ loadMore: loadFlags });
-  const router = useRouter()
+    setLoading(true);
+    getFlags({ skip, take })
+      .then((res) => {
+        setFlags([...flags, ...res]);
+        setSkip(skip + take);
+      })
+      .catch((err) => console.log(err));
+    
+    setLoading(false);
+  }, [isLoading, skip, take])
   
+  const router = useRouter()
+  const scrollObserver = useInfiniteScroll({ fetchData });
 
   //
   if (isLoading) {
@@ -101,7 +99,7 @@ export default function Home() {
             isOn={f.state}
           />
         ))}
-        <div ref={setTarget} style={{ height: '10px' }}></div>
+        <div ref={scrollObserver}></div>
       </div>
     </main>
   )

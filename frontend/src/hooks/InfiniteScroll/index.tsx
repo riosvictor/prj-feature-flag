@@ -1,33 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface IProps {
-  loadMore: () => void;
+  fetchData: () => void;
 }
-const useInfiniteScroll = ({ loadMore }: IProps) => {
-  const [target, setTarget] = useState<HTMLElement|null>(null);
+const useInfiniteScroll = ({ fetchData }: IProps) => {
+  const target = useRef(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 0.8 }
-    );
+    const observer = new IntersectionObserver((entries) => {
+      const target = entries[0];
+      if (target.isIntersecting) {
+        fetchData();
+      }
+    });
 
-    if (target) {
-      observer.observe(target);
+    if (target.current) {
+      observer.observe(target.current);
     }
 
     return () => {
-      if (target) {
-        observer.disconnect();
+      if (target.current) {
+        observer.unobserve(target.current);
       }
     };
-  }, [target, loadMore]);
+  }, [fetchData]);
 
-  return setTarget;
+  return target;
 };
 
 export default useInfiniteScroll;
